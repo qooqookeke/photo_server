@@ -60,7 +60,9 @@ class PostingListResource(Resource):
         # DB(sql) 연결 후 저장
         try:
             connection = get_connection()
-            query = '''insert into photo
+
+            # posting 테이블에 저장
+            query = '''insert into posting
                         (imgUrl, userId, content)
                         values
                         (%s, %s, %s);'''
@@ -68,6 +70,22 @@ class PostingListResource(Resource):
             imgUrl = Config.S3_LOCATION + file.filename
 
             record = (imgUrl, user_id, content)
+
+            # tag_name 테이블에 저장
+            query = '''insert into tag_name
+                        (name)
+                        values
+                        (%s);'''
+            
+            record = (tag_list, )
+
+            # tag 테이블에 저장
+            query = '''insert into tag
+                        (postingId, tagId)
+                        values
+                        (%s, %s);'''
+            
+            record = (tag_list, )
 
             cursor = connection.cursor()
             cursor.execute(query, record)
