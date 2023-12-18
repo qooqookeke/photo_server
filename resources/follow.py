@@ -77,14 +77,17 @@ class FollowContentResource(Resource):
         try:
             connection = get_connection()
             query = '''select p.id as photoId, p.userId, 
-                        u.nickname, p.imgUrl, p.content, 
-                        p.createdAt, p.updatedAt
+                        u.email, p.imgUrl, p.content, 
+                        p.createdAt, count(l.postId) as likeCnt
                         from follow f
                         join photo p
                         on f.followeeId = p.userId
                         join user u
                         on p.userId = u.id
+                        left join islike l
+                        on u.id = l.userId 
                         where f.followerId = %s
+                        group by p.id
                         order by p.createdAt desc
                         limit '''+offset+''', '''+limit+''';'''
             record = (user_id, )
@@ -93,6 +96,12 @@ class FollowContentResource(Resource):
             cursor.execute(query, record)
 
             result_list = cursor.fetchall()
+
+            i = 0
+            for row in result_list:
+                result_list[i]['createdAt'] = row['createdAt'].isoformat()
+                result_list[i]['updatedAt'] = row['updatedAt'].isoformat()
+                i = i + 1
 
             cursor.close()
             connection.close()
