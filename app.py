@@ -4,7 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from config import Config
 from resources.follow import FollowContentResource, FollowResource
-from resources.post import PhotoPostResource
+from resources.posting import PostingListResource
 from resources.user import UserLoginResource, UserLogoutResource, UserRegisterResource
 from resources.user import jwt_blocklist
 
@@ -22,10 +22,10 @@ def check_if_token_is_revoked(jwt_header, jwt_payload):
 api = Api(app)
 
 
-api.add_resource(UserRegisterResource,'/register')
-api.add_resource(UserLoginResource,'/login')
-api.add_resource(UserLogoutResource,'/logout')
-api.add_resource(PhotoPostResource,'/upload')
+api.add_resource(UserRegisterResource,'/user/register')
+api.add_resource(UserLoginResource,'/user/login')
+api.add_resource(UserLogoutResource,'/user/logout')
+api.add_resource(PostingListResource,'/posting')
 api.add_resource(FollowResource,'/follow/<int:followee_id>')
 api.add_resource(FollowContentResource,'/follow/content')
 
